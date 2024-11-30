@@ -19,7 +19,7 @@ function HomePage() {
         <div className="container mx-auto flex justify-between items-center p-4">
           <div className="flex items-center space-x-4">
             <TrendingUp className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold text-primary">SmartSpender</h1>
+            <h1 className="text-2xl font-bold text-primary">SmartSave</h1>
           </div>
           <div className="flex space-x-2">
             {/* Desktop Buttons */}
@@ -33,30 +33,35 @@ function HomePage() {
             </Link>
 
             <Link href='/signup'>
-            <Button
-              className="hidden md:inline-flex border-primary/50 hover:bg-primary/10 transition-all duration-300 group"
-            >
-              <UserPlus className="mr-2 h-4 w-4 text-primary group-hover:rotate-6 transition-transform" />
-              Sign Up
-            </Button>
+              <Button
+                className="hidden md:inline-flex border-primary/50 hover:bg-primary/10 transition-all duration-300 group"
+              >
+                <UserPlus className="mr-2 h-4 w-4 text-primary group-hover:rotate-6 transition-transform" />
+                Sign Up
+              </Button>
             </Link>
 
             {/* Mobile Icons */}
             <div className="md:hidden flex space-x-2">
-              <Button
-                size="icon"
-                variant="ghost"
-                className="hover:bg-primary/10 transition-colors duration-300"
-              >
-                <LogIn className="h-4 w-4 text-primary" />
-              </Button>
-              <Button
-                size="icon"
-                variant="outline"
-                className="border-primary/50 hover:bg-primary/10 transition-all duration-300 group"
-              >
-                <UserPlus className="h-4 w-4 text-primary group-hover:rotate-6 transition-transform" />
-              </Button>
+              <Link href='/login'>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="hover:bg-primary/10 transition-colors duration-300"
+                >
+                  <LogIn className="h-4 w-4 text-primary" />
+                </Button>
+
+              </Link>
+              <Link href='/signup'>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="border-primary/50 hover:bg-primary/10 transition-all duration-300 group"
+                >
+                  <UserPlus className="h-4 w-4 text-primary group-hover:rotate-6 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
