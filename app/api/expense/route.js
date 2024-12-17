@@ -5,10 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req, res) {
     try {
         await connectDb();  // Ensure the DB connection is established
-
-        // Extract data from the request body
         const { expenseDate, expenseName, expenseAmount, expenseCategory } = await req.json();
-        console.log( expenseDate, expenseName, expenseAmount, expenseCategory ,'Expense Data')
         // Create a new expense entry
         await Expense.create({
             expenseDate,
@@ -27,12 +24,9 @@ export async function POST(req, res) {
 
 export async function GET(req, res) {
     try {
-        // Extract query parameters from the URL
         const { searchParams } = new URL(req.url);
         const fromDate = searchParams.get('fromDate');
         const endDate = searchParams.get('endDate');
-        console.log(fromDate, endDate)
-        // Validate date inputs
         if (!fromDate || !endDate) {
             return new Response(
                 JSON.stringify({ error: 'Both fromDate and endDate are required.' }),
