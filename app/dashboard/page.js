@@ -1,10 +1,10 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Pencil, Trash } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar"
 import {
     Dialog,
@@ -17,6 +17,15 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 import {
     Select,
     SelectContent,
@@ -36,6 +45,7 @@ const ExpenseTracker = () => {
     const [expenseName, setExpenseName] = useState('')
     const [expenseAmount, setExpenseAmount] = useState('')
     const [expenseCategory, setExpenseCategory] = useState('')
+    const [expenses, setExpenses] = useState()
 
     const expenseCategories = [
         'Clothes',
@@ -48,7 +58,7 @@ const ExpenseTracker = () => {
     const handleAddExpense = async () => {
         console.log(date, expenseName, expenseAmount, expenseCategories)
         try {
-            const data = await fetch('/api/addexpense', {
+            const data = await fetch('/api/expense', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,7 +66,7 @@ const ExpenseTracker = () => {
                 body: JSON.stringify({ expenseDate: date, expenseName, expenseAmount, expenseCategory: expenseCategory })
             })
             const res = await data.json();
-            if(res){
+            if (res) {
                 alert(res.message)
             }
         } catch (error) {
@@ -67,6 +77,31 @@ const ExpenseTracker = () => {
         setExpenseAmount('')
         setExpenseCategory('')
     }
+
+    const fetchThisMonthData = async () => {
+        const todayDate = new Date();
+        const currentYear = todayDate.getFullYear();
+        const currentMonth = todayDate.getMonth();
+        const monthStartDate = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0];
+        const todayDateString = todayDate.toISOString().split('T')[0];
+        const apiUrl = `/api/expense?fromDate=${monthStartDate}&endDate=${todayDateString}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const fetchData = await response.json(); // Assuming the API returns JSON data
+            setExpenses(fetchData);
+        } catch (error) {
+            console.error('Error fetching this month data:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchThisMonthData()
+    }, [])
 
     return (
         <div className="container mx-auto p-4 space-y-6">
@@ -203,6 +238,59 @@ const ExpenseTracker = () => {
                     </DialogContent>
                 </Dialog>
             </div>
+            <Table className="w-full border-collapse rounded-lg overflow-hidden shadow-lg">
+                {/* Table Caption */}
+                <TableCaption className="text-sm text-gray-600">
+                    {expenses?.length === 0
+                        ? "No expenses found for the selected date range"
+                        : `Showing ${expenses?.length} expense(s)`
+                    }
+                </TableCaption>
+
+                {/* Table Header */}
+                <TableHeader className="bg-gray-800">
+                    <TableRow>
+                        <TableHead className="text-white font-semibold uppercase px-4 py-2 text-left">Expense Date</TableHead>
+                        <TableHead className="text-white font-semibold uppercase px-4 py-2 text-left">Expense Name</TableHead>
+                        <TableHead className="text-white font-semibold uppercase px-4 py-2 text-left">Expense Amount</TableHead>
+                        <TableHead className="text-white font-semibold uppercase px-4 py-2 text-left">Expense Category</TableHead>
+                        <TableHead className="text-white font-semibold uppercase px-4 py-2 text-left">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+
+                {/* Table Body */}
+                <TableBody className="bg-gray-100">
+                    {expenses?.map((expense, index) => (
+                        <TableRow
+                            key={index}
+                            className="hover:bg-gray-200 transition-colors duration-200"
+                        >
+                            <TableCell className="px-4 py-2 text-gray-700">{format(expense?.expenseDate, "dd MM yyyy")}</TableCell>
+                            <TableCell className="px-4 py-2 text-gray-700">{expense?.expenseName}</TableCell>
+                            <TableCell className="px-4 py-2 text-gray-700">${expense?.expenseAmount.toFixed(2)}</TableCell>
+                            <TableCell className="px-4 py-2 text-gray-700">{expense?.expenseCategory}</TableCell>
+                            <TableCell className="px-4 py-2 flex gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => onEdit(expense)}
+                                    className="text-blue-500 hover:text-blue-700"
+                                >
+                                    <Pencil size={20} />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => onDelete(expense._id)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    <Trash size={20} />
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div>
     )
 }
