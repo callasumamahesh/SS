@@ -14,7 +14,9 @@ import {
     LayoutDashboard,
     Clock,
     User,
-    TrendingUp
+    TrendingUp,
+    Clock1,
+    Banknote
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -38,13 +40,18 @@ const Header = () => {
         {
             name: 'Savings',
             href: '/yoursavings',
-            icon: User,
+            icon: Banknote,
         },
         {
             name: 'Profile',
             href: '/profile',
             icon: User,
         },
+        {
+            name: 'Logout',
+            icon: Clock1,
+        },
+
     ];
 
     return (

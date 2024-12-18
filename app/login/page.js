@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { useRouter } from "next/navigation";
 
 function LoginForm() {
   // Use state to store email and password values
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useRouter()
   // Handle email change
   const handleEmailChange = (e) => {
     setEmail(e.target.value); // Update the email state
@@ -30,15 +31,27 @@ function LoginForm() {
 
   // Handle form submit (login)
   const handleSignin = async () => {
-    const data = await fetch('/api/loginapi', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }), // Send email and password to API
-    });
-    const res = await data.json();
-    console.log(res);
+    try {
+      const data = await fetch('/api/loginapi', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }), // Send email and password to API
+      });
+      const res = await data.json();
+      if(res.status === 200){
+        localStorage.setItem('token',res.token)
+        return router.push('/dashboard')
+      }
+      else{
+        alert(res.message)
+      }
+
+    } catch (error) {
+       console.log(error)
+    }
+
   };
 
   return (

@@ -52,7 +52,8 @@ const ExpenseTracker = () => {
         'Family Savings',
         'Food',
         'Hostel',
-        'Miscellaneous'
+        'Travel',
+        'Miscellaneous',
     ]
 
     const handleAddExpense = async () => {
