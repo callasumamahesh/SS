@@ -5,13 +5,18 @@ import { NextResponse } from "next/server";
 export async function POST(req, res) {
     try {
         await connectDb();  // Ensure the DB connection is established
-        const { expenseDate, expenseName, expenseAmount, expenseCategory } = await req.json();
+        const { expenseDate, expenseName, expenseAmount, expenseCategory, user } = await req.json();
+        console.log(expenseDate, expenseName, expenseAmount, expenseCategory, user)
+        if(!expenseDate || !expenseName || !expenseAmount || !expenseCategory || !user){
+            return NextResponse.json({message:'Required Fields are missing'})
+        }
         // Create a new expense entry
         await Expense.create({
             expenseDate,
             expenseName,
             expenseAmount,
             expenseCategory,
+            user,
         });
 
         // Return a success response
@@ -27,21 +32,24 @@ export async function GET(req, res) {
         const { searchParams } = new URL(req.url);
         const fromDate = searchParams.get('fromDate');
         const endDate = searchParams.get('endDate');
-        if (!fromDate || !endDate) {
+        const userId = searchParams.get('userId'); // Extract userId from searchParams
+
+        if (!fromDate || !endDate || !userId) {
             return new Response(
-                JSON.stringify({ error: 'Both fromDate and endDate are required.' }),
+                JSON.stringify({ error: 'fromDate, endDate, and userId are required.' }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
-        // Query MongoDB for expenses within the date range
+        // Query MongoDB for expenses within the date range and specific to the userId
         const expenses = await Expense.find({
             expenseDate: {
                 $gte: new Date(`${fromDate}T00:00:00`),   // Start of fromDate
                 $lte: new Date(`${endDate}T23:59:59`),   // End of endDate (full day)
             },
+            user: userId, // Match the userId
         });
-        
+
         return new Response(
             JSON.stringify(expenses),
             { status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -54,4 +62,5 @@ export async function GET(req, res) {
         );
     }
 }
+
 

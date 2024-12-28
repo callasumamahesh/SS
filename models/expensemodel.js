@@ -18,11 +18,11 @@ const createNewExpense = mongoose.Schema({
         type:String,
         required:true,
     },
-    // user: {
-    //     type: mongoose.Schema.Types.ObjectId, // Define the type as ObjectId
-    //     ref: "CreateUser", // Reference to the User collection
-    //     required: true, // Ensure userId is mandatory
-    // },
+    user: {
+        type: mongoose.Schema.Types.ObjectId, // Define the type as ObjectId
+        ref: "CreateUser", // Reference to the User collection
+        required: true, // Ensure userId is mandatory
+    },
 
 })
 

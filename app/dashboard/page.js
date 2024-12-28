@@ -64,7 +64,7 @@ const ExpenseTracker = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ expenseDate: date, expenseName, expenseAmount, expenseCategory: expenseCategory })
+                body: JSON.stringify({ expenseDate: date, expenseName, expenseAmount, expenseCategory: expenseCategory, user:'674ae7094edf5622fe3b6ab9' })
             })
             const res = await data.json();
             if (res) {
@@ -85,7 +85,7 @@ const ExpenseTracker = () => {
         const currentMonth = todayDate.getMonth();
         const monthStartDate = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0];
         const todayDateString = todayDate.toISOString().split('T')[0];
-        const apiUrl = `/api/expense?fromDate=${monthStartDate}&endDate=${todayDateString}`;
+        const apiUrl = `/api/expense?fromDate=${monthStartDate}&endDate=${todayDateString}&userId=674ae7094edf5622fe3b6ab9`;
 
         try {
             const response = await fetch(apiUrl);
